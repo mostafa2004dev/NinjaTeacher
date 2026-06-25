@@ -1,0 +1,10 @@
+[Error] Expected property name or '}' in JSON at position 1 (line 1 column 2)
+🔴 APPLY ERROR FULL: Error: Already applied to this job
+    at Object.applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:256:23)
+    at async applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.controller.js:29:25)
+🔴 APPLY ERROR MESSAGE: Already applied to this job
+🔴 APPLY ERROR STACK: Error: Already applied to this job
+    at Object.applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:256:23)
+    at async applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.controller.js:29:25)
+[survey] AI assessment trigger failed: AI service unreachable at http://localhost:8000. Input X contains NaN.
+GradientBoostingClassifier does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values

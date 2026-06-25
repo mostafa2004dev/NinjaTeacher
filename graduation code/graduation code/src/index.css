@@ -1,0 +1,628 @@
+@import "tailwindcss";
+@plugin './hero.js';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+/* ── Light tokens ── */
+:root {
+    --background: 226 100% 97%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 241 84% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 241 84% 65%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 271 91% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 241 84% 65%;
+    --radius: 1.5rem;
+
+    --surface-page: #f0f4ff;
+    --surface-page-to: #fdf2f8;
+    --surface-card: #ffffff;
+    --surface-input: #ffffff;
+    --surface-muted: #f3f4f6;
+    --surface-nav: rgba(255, 255, 255, 0.85);
+
+    --text-primary: #1e1b4b;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+
+    --border-default: #e5e7eb;
+}
+
+/* ── Dark tokens ── */
+.dark {
+    --background: 224 71% 8%;
+    --foreground: 210 40% 95%;
+    --card: 224 55% 12%;
+    --card-foreground: 210 40% 95%;
+    --popover: 224 55% 12%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 241 84% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 224 45% 16%;
+    --secondary-foreground: 210 40% 85%;
+    --muted: 224 45% 14%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 271 91% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 224 35% 20%;
+    --input: 224 35% 20%;
+    --ring: 241 84% 65%;
+
+    --surface-page: #0d0f1a;
+    --surface-page-to: #130d1f;
+    --surface-card: #111827;
+    --surface-input: #1a2236;
+    --surface-muted: #1f2937;
+    --surface-nav: rgba(13, 15, 26, 0.92);
+
+    --text-primary: #f1f0ff;
+    --text-secondary: #c4b5fd;
+    --text-muted: #6b7280;
+
+    --border-default: #1f2937;
+}
+
+/* ── Base ── */
+@layer base {
+
+    html,
+    body {
+        min-height: 100vh;
+    }
+
+    body {
+        background: linear-gradient(135deg, var(--surface-page) 0%, var(--surface-page-to) 100%);
+        background-attachment: fixed;
+        color: hsl(var(--foreground));
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+    }
+}
+
+/* ── Global transition ── */
+*,
+*::before,
+*::after {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-duration: 220ms;
+    transition-timing-function: ease;
+}
+
+/* ── Utilities ── */
+@layer utilities {
+    .font-display {
+        font-family: ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .font-body {
+        font-family: ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .primary-text {
+        color: hsl(var(--primary));
+    }
+
+    .accent-text {
+        color: hsl(var(--accent));
+    }
+
+    .soft-shadow {
+        box-shadow: 0 20px 40px -15px hsl(241 84% 65% / 0.15);
+    }
+
+    .badge-shadow {
+        box-shadow: 0 10px 25px -5px hsl(241 84% 65% / 0.1);
+    }
+
+    .bg-page {
+        background-color: var(--surface-page) !important;
+    }
+
+    .bg-card-surface {
+        background-color: var(--surface-card) !important;
+    }
+
+    .bg-input-surface {
+        background-color: var(--surface-input) !important;
+    }
+
+    .bg-muted-surface {
+        background-color: var(--surface-muted) !important;
+    }
+}
+
+/* ══════════════════════════════════════════
+   DARK MODE OVERRIDES
+   خارج الـ @layer عشان تاخد أعلى specificity
+   وتـoverride على Tailwind الـ hardcoded classes
+══════════════════════════════════════════ */
+
+/* ── Backgrounds ── */
+html.dark .bg-white,
+html.dark [class*="bg-white"] {
+    background-color: var(--surface-card) !important;
+}
+
+html.dark .bg-gray-50 {
+    background-color: #0f1623 !important;
+}
+
+html.dark .bg-gray-100 {
+    background-color: #1a2236 !important;
+}
+
+html.dark .bg-gray-200 {
+    background-color: #1f2937 !important;
+}
+
+html.dark .bg-gray-800 {
+    background-color: #111827 !important;
+}
+
+html.dark .bg-gray-900 {
+    background-color: #0d0f1a !important;
+}
+
+/* ── Color badges backgrounds ── */
+html.dark .bg-purple-50 {
+    background-color: #1e1b4b !important;
+}
+
+html.dark .bg-purple-100 {
+    background-color: #2e2770 !important;
+}
+
+html.dark .bg-teal-50 {
+    background-color: #042f2e !important;
+}
+
+html.dark .bg-teal-100 {
+    background-color: #083344 !important;
+}
+
+html.dark .bg-blue-50 {
+    background-color: #0c1a3a !important;
+}
+
+html.dark .bg-blue-100 {
+    background-color: #1e3a5f !important;
+}
+
+html.dark .bg-green-50 {
+    background-color: #052e16 !important;
+}
+
+html.dark .bg-green-100 {
+    background-color: #14532d !important;
+}
+
+html.dark .bg-amber-50 {
+    background-color: #2d1a00 !important;
+}
+
+html.dark .bg-amber-100 {
+    background-color: #3d2200 !important;
+}
+
+html.dark .bg-red-50 {
+    background-color: #2d0a0a !important;
+}
+
+html.dark .bg-red-100 {
+    background-color: #450a0a !important;
+}
+
+html.dark .bg-pink-50 {
+    background-color: #2d0a1e !important;
+}
+
+html.dark .bg-pink-100 {
+    background-color: #4a0e30 !important;
+}
+
+html.dark .bg-indigo-50 {
+    background-color: #1e1b4b !important;
+}
+
+html.dark .bg-indigo-100 {
+    background-color: #312e81 !important;
+}
+
+/* ── Text colors ── */
+html.dark .text-gray-900 {
+    color: #f1f0ff !important;
+}
+
+html.dark .text-gray-800 {
+    color: #e8e4ff !important;
+}
+
+html.dark .text-gray-700 {
+    color: #d1c9ff !important;
+}
+
+html.dark .text-gray-600 {
+    color: #b8aef0 !important;
+}
+
+html.dark .text-gray-500 {
+    color: #9d94c4 !important;
+}
+
+html.dark .text-gray-400 {
+    color: #7c6fa0 !important;
+}
+
+html.dark .text-gray-300 {
+    color: #6b7280 !important;
+}
+
+html.dark .text-black {
+    color: #f1f0ff !important;
+}
+
+html.dark .text-white {
+    color: #ffffff !important;
+}
+
+/* ── النص اللي مش عنده class — inherits من الـ body ── */
+html.dark p,
+html.dark span:not([class*="text-"]),
+html.dark h1:not([class*="text-"]),
+html.dark h2:not([class*="text-"]),
+html.dark h3:not([class*="text-"]),
+html.dark h4:not([class*="text-"]),
+html.dark h5:not([class*="text-"]),
+html.dark h6:not([class*="text-"]),
+html.dark li:not([class*="text-"]),
+html.dark td:not([class*="text-"]),
+html.dark th:not([class*="text-"]),
+html.dark label:not([class*="text-"]) {
+    color: #e2e0ff;
+}
+
+/* أي text مش معاه class على الإطلاق */
+html.dark [class=""],
+html.dark :not([class]) {
+    color: inherit;
+}
+
+html.dark .text-black {
+    color: #f1f0ff !important;
+}
+
+/* ── Slate text (مختلف عن gray) ── */
+html.dark .text-slate-900 {
+    color: #f1f0ff !important;
+}
+
+html.dark .text-slate-800 {
+    color: #e8e4ff !important;
+}
+
+html.dark .text-slate-700 {
+    color: #d1c9ff !important;
+}
+
+html.dark .text-slate-600 {
+    color: #b8aef0 !important;
+}
+
+html.dark .text-slate-500 {
+    color: #9d94c4 !important;
+}
+
+html.dark .text-slate-400 {
+    color: #7c6fa0 !important;
+}
+
+html.dark .text-slate-300 {
+    color: #6b7280 !important;
+}
+
+/* ── Slate backgrounds ── */
+html.dark .bg-slate-50 {
+    background-color: #0f1623 !important;
+}
+
+html.dark .bg-slate-100 {
+    background-color: #1a2236 !important;
+}
+
+html.dark .bg-slate-200 {
+    background-color: #1f2937 !important;
+}
+
+html.dark .bg-slate-800 {
+    background-color: #111827 !important;
+}
+
+html.dark .bg-slate-900 {
+    background-color: #0d0f1a !important;
+}
+
+/* ── Slate borders ── */
+html.dark .border-slate-50 {
+    border-color: #0f1623 !important;
+}
+
+html.dark .border-slate-100 {
+    border-color: #1f2937 !important;
+}
+
+html.dark .border-slate-200 {
+    border-color: #374151 !important;
+}
+
+html.dark .border-slate-300 {
+    border-color: #4b5563 !important;
+}
+
+/* ── Hardcoded hex backgrounds (بتمسك bg-[#xxx]) ── */
+html.dark [class*="bg-[#F8FAFC]"],
+html.dark [class*="bg-[#f8fafc]"] {
+    background-color: var(--surface-page) !important;
+}
+
+html.dark [class*="bg-[#FFFFFF]"],
+html.dark [class*="bg-[#ffffff]"],
+html.dark [class*="bg-[#fff]"] {
+    background-color: var(--surface-card) !important;
+}
+
+html.dark [class*="bg-[#F1F5F9]"],
+html.dark [class*="bg-[#f1f5f9]"] {
+    background-color: #1a2236 !important;
+}
+
+/* ── Borders ── */
+html.dark .border-gray-100 {
+    border-color: #1f2937 !important;
+}
+
+html.dark .border-gray-200 {
+    border-color: #374151 !important;
+}
+
+html.dark .border-gray-300 {
+    border-color: #4b5563 !important;
+}
+
+/* ── Inputs & forms ── */
+html.dark input,
+html.dark textarea,
+html.dark select {
+    background-color: var(--surface-input) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-default) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #4b5563 !important;
+}
+
+/* ── Shadows ── */
+html.dark .shadow-sm {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .shadow-md {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .shadow-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+}
+
+html.dark .shadow-xl {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ── Dividers ── */
+html.dark hr,
+html.dark .divide-gray-100>*+*,
+html.dark .divide-gray-200>*+* {
+    border-color: #1f2937 !important;
+}
+
+/* ── Scrollbar ── */
+html.dark ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+    background: #0d0f1a;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #2d3748;
+    border-radius: 3px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #4a5568;
+}
+
+/* ── Footer (hardcoded — يفضل زي ما هو في الحالتين) ── */
+.footer {
+    background-color: #1a1a2e;
+    color: #aaaaaa;
+    padding: 48px 40px 24px;
+    width: 100%;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-logo {
+    font-size: 22px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.footer-logo span {
+    color: #f5a623;
+}
+
+.footer-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #aaaaaa;
+    margin-bottom: 20px;
+}
+
+.social-row {
+    display: flex;
+    gap: 10px;
+}
+
+.social-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 0.5px solid #444444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #aaaaaa;
+    font-size: 14px;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.social-btn:hover {
+    border-color: #f5a623;
+    color: #f5a623;
+}
+
+.col-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 16px;
+}
+
+.col-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.col-links li {
+    font-size: 13px;
+    color: #aaaaaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.col-links li:hover {
+    color: #f5a623;
+}
+
+.footer-bottom {
+    border-top: 0.5px solid #333333;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.footer-bottom p {
+    font-size: 12px;
+    color: #666666;
+    margin: 0;
+}
+
+.bottom-links {
+    display: flex;
+    gap: 20px;
+}
+
+.bottom-links span {
+    font-size: 12px;
+    color: #666666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.bottom-links span:hover {
+    color: #f5a623;
+}
+
+.stats-bar {
+    background: var(--surface-card);
+    border-top: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--border-default);
+    padding: 32px 24px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-num {
+    font-size: 32px;
+    font-weight: 800;
+    color: #7c3aed;
+    letter-spacing: -0.04em;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}

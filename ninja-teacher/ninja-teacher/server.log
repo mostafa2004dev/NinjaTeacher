@@ -1,0 +1,14 @@
+✅ Database connected
+✅ Associations defined
+✅ Models synced
+✅ Subscription plans seeded successfully.
+✅ Admin already exists — skipping seed.
+✅ Socket.io initialized
+🚀 http://localhost:3000
+🔌 ws://localhost:3000
+📩 Apply request body: { school_id: 26, job_id: 20 }
+👤 Teacher ID: 33
+🏫 School ID: 26 | 💼 Job ID: 20
+📩 Apply request body: { school_id: 29, job_id: 20 }
+👤 Teacher ID: 33
+🏫 School ID: 29 | 💼 Job ID: 20

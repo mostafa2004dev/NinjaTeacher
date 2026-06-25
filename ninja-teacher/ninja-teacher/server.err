@@ -1,0 +1,15 @@
+🔴 APPLY ERROR FULL: Error: Job not found.
+    at resolveSchoolAndJobIds (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:216:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:251:5)
+    at async applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.controller.js:29:25)
+🔴 APPLY ERROR MESSAGE: Job not found.
+🔴 APPLY ERROR STACK: Error: Job not found.
+    at resolveSchoolAndJobIds (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:216:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Object.applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:251:5)
+    at async applyToJob (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.controller.js:29:25)
+🔴 CANCEL ERROR: Error: Application not found
+    at Object.cancelApplication (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.service.js:306:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async cancelApplication (C:\xampp\htdocs\final-code\ninja-teacher\ninja-teacher\src\modules\appliedJobs\appliedJobs.controller.js:65:5)

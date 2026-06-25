@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ninja-Teacher · AI Console</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#10131F; --ink-2:#3A4156; --line:#E3E6EF; --bg:#EEF0F6;
+    --surface:#FFFFFF; --brand:#0E7C6B; --brand-soft:#E3F4F0;
+    --signal:#E8920C; --good:#0E7C6B; --bad:#C2453B; --muted:#8A91A6;
+    --radius:14px; --shadow:0 1px 2px rgba(16,19,31,.04),0 8px 24px rgba(16,19,31,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"IBM Plex Sans Arabic","Segoe UI",system-ui,sans-serif;line-height:1.55}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  a{color:var(--brand)}
+  header{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;
+    padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  header h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.2px}
+  header .tag{font-size:11px;color:#9AA3BD;border:1px solid #2A3047;padding:2px 8px;border-radius:999px}
+  .status{margin-inline-start:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:#C7CDDE}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);box-shadow:0 0 0 3px rgba(255,255,255,.06)}
+  .dot.up{background:#3BD68A} .dot.down{background:#E8624D}
+  .config{background:#171B2B;color:#cfd4e4;padding:10px 22px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px}
+  .config input{background:#0C0F1A;border:1px solid #2A3047;color:#fff;border-radius:8px;padding:7px 10px;font-size:13px}
+  .config input#base{width:230px}
+  main{max-width:1180px;margin:0 auto;padding:22px;display:grid;gap:22px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tab{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+    padding:9px 16px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600}
+  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .panel{display:none} .panel.active{display:grid;gap:20px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:20px}
+  .card h2{margin:0 0 4px;font-size:16px} .card .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .grid{display:grid;gap:14px} .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:780px){.g2,.g3{grid-template-columns:1fr}}
+  label.f{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin:0 0 5px}
+  select,.txt{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 10px;font-size:13.5px;
+    background:#fff;color:var(--ink);font-family:inherit}
+  select:focus,.txt:focus{outline:2px solid var(--brand-soft);border-color:var(--brand)}
+  .btn{background:var(--brand);color:#fff;border:0;border-radius:10px;padding:12px 22px;
+    font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:hover{filter:brightness(1.05)} .btn:disabled{opacity:.5;cursor:wait}
+  .btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+  /* result */
+  .verdict{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .badge{font-weight:800;font-size:15px;padding:8px 16px;border-radius:10px}
+  .badge.ok{background:var(--brand-soft);color:var(--good)} .badge.no{background:#FBE9E7;color:var(--bad)}
+  .conf{font-size:13px;color:var(--muted)}
+  .gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  @media(max-width:600px){.gauges{grid-template-columns:1fr}}
+  .gauge{border:1px solid var(--line);border-radius:12px;padding:14px}
+  .gauge .lab{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .gauge .val{font-size:26px;font-weight:800;margin:2px 0 8px}
+  .meter{height:8px;background:#EDEFF5;border-radius:99px;overflow:hidden}
+  .meter > i{display:block;height:100%;border-radius:99px;background:var(--brand);width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .pers{margin-top:14px;border:1px dashed var(--line);border-radius:12px;padding:14px;background:#FCFCFE}
+  .pers b{font-size:15px}
+  .factors{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:600px){.factors{grid-template-columns:1fr}}
+  .factors ul{list-style:none;margin:6px 0 0;padding:0;font-size:13px}
+  .factors li{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F1F2F7}
+  .pos b{color:var(--good)} .neg b{color:var(--bad)}
+  .tips{margin:14px 0 0;padding:0;list-style:none}
+  .tips li{background:#FFF8EC;border:1px solid #F6E2BD;border-radius:9px;padding:9px 12px;margin-bottom:8px;font-size:13.5px}
+  .schools{margin-top:8px;display:grid;gap:8px}
+  .school{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:11px;padding:11px 14px}
+  .school .score{font-weight:800;font-size:17px;color:var(--brand);min-width:42px}
+  .school .meta{font-size:12px;color:var(--muted)}
+  .school .star{margin-inline-start:auto;font-size:12px;color:var(--signal);font-weight:700}
+  .cards5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  @media(max-width:780px){.cards5{grid-template-columns:1fr 1fr}}
+  .kpi{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
+  .kpi .n{font-size:24px;font-weight:800} .kpi .l{font-size:12px;color:var(--muted)}
+  .insights{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+  .insights li{background:var(--brand-soft);border-radius:9px;padding:9px 12px;font-size:13.5px;color:#0c5e52}
+  canvas{max-height:260px}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:30px}
+  .err{background:#FBE9E7;color:var(--bad);border:1px solid #F3C9C4;border-radius:9px;padding:10px 13px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Ninja-Teacher</h1><span class="tag">AI Console</span>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">Checking…</span></div>
+</header>
+<div class="config">
+  <span>AI Service URL:</span>
+  <input id="base" value="http://localhost:8000" />
+  <span>API Key (optional):</span>
+  <input id="key" placeholder="empty in dev" />
+  <button class="tab" onclick="ping()">Recheck</button>
+</div>
+
+<main>
+  <div class="tabs">
+    <button class="tab active" data-t="assess">Teacher Assessment</button>
+    <button class="tab" data-t="analytics">Analytics</button>
+    <button class="tab" data-t="reverse">School → Best Teachers</button>
+    <button class="tab" data-t="schoolq">🆕 School Questions → AI Match</button>
+  </div>
+
+  <!-- ===== ASSESS ===== -->
+  <section class="panel active" id="p-assess">
+    <div class="card">
+      <h2>Teacher Assessment</h2>
+      <p class="sub">Answer the survey — the model decides acceptance, the 3 dimensions, personality type, and best-matching schools.</p>
+      <div class="grid g3" id="qform"></div>
+      <div class="grid g3" style="margin-top:14px" id="pform"></div>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" id="runBtn" onclick="runPredict()">Run AI Assessment</button>
+        <button class="btn ghost" onclick="randomize()">Random sample</button>
+      </div>
+      <div id="predErr"></div>
+    </div>
+
+    <div class="card" id="resCard" style="display:none">
+      <h2>Model Result</h2>
+      <div class="verdict">
+        <span class="badge" id="verdict"></span>
+        <span class="conf" id="confTxt"></span>
+      </div>
+      <div class="gauges" id="gauges"></div>
+      <div class="pers" id="pers"></div>
+      <div class="factors">
+        <div class="pos"><b>Positive factors</b><ul id="posF"></ul></div>
+        <div class="neg"><b>Negative factors</b><ul id="negF"></ul></div>
+      </div>
+      <h2 style="margin-top:18px">Improvement tips</h2>
+      <ul class="tips" id="tips"></ul>
+      <div style="display:flex;align-items:center;gap:12px;margin:18px 0 6px;flex-wrap:wrap">
+        <h2 style="margin:0">Best-matching schools</h2>
+        <select id="fCity" class="txt" style="width:auto" onchange="reFilter()"><option value="">All cities</option></select>
+        <select id="fType" class="txt" style="width:auto" onchange="reFilter()"><option value="">All types</option></select>
+      </div>
+      <div class="schools" id="schools"></div>
+    </div>
+  </section>
+
+  <!-- ===== ANALYTICS ===== -->
+  <section class="panel" id="p-analytics">
+    <div class="card">
+      <h2>Analytics Dashboard</h2>
+      <p class="sub">Live data from the AI service — based on 500 schools and 1500 teaching-quality records.</p>
+      <div class="cards5" id="kpis"><div class="empty">Click load</div></div>
+      <div style="margin-top:14px"><button class="btn" onclick="loadAnalytics()">Load analytics</button></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h2>Teaching quality by subject</h2><canvas id="chSubj"></canvas></div>
+      <div class="card"><h2>School types distribution</h2><canvas id="chType"></canvas></div>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h2>Top cities (school count)</h2><canvas id="chCity"></canvas></div>
+      <div class="card"><h2>Smart insights + predictions</h2><ul class="insights" id="insights"></ul></div>
+    </div>
+  </section>
+
+  <!-- ===== REVERSE ===== -->
+  <section class="panel" id="p-reverse">
+    <div class="card">
+      <h2>Best teachers for a school</h2>
+      <p class="sub">Enter a School ID (e.g. SCH0001) — the model ranks teachers by the school's weights.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+        <div style="flex:1;min-width:200px"><label class="f">School ID</label>
+          <input id="sid" class="txt" value="SCH0001" /></div>
+        <button class="btn" onclick="loadTeachers()">Show teachers</button>
+      </div>
+      <div id="revErr"></div>
+      <div id="revOut" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- ===== SCHOOL QUESTIONS (5 traits → AI matching) ===== -->
+  <section class="panel" id="p-schoolq">
+    <div class="card">
+      <h2>Match teachers via the 5 school questions</h2>
+      <p class="sub">The school answers 5 trait questions → the model maps them to preferred personalities and returns accepted teachers with scores.</p>
+      <div class="grid g2">
+        <div><label class="f">School name</label><input id="sq_name" class="txt" value="Al-Nour School" /></div>
+        <div><label class="f">City</label><input id="sq_city" class="txt" value="Cairo" /></div>
+        <div><label class="f">School type</label>
+          <select id="sq_type"><option>Private</option><option>International</option><option>Language</option><option>Experimental</option><option>Public</option><option>Azhari</option></select></div>
+        <div><label class="f">Subjects needed (comma-separated)</label><input id="sq_subjects" class="txt" value="Math, Science" /></div>
+      </div>
+      <div class="grid g2" id="sq_questions" style="margin-top:6px"></div>
+      <div style="margin-top:16px"><button class="btn" onclick="matchSchool()">Match teachers</button></div>
+      <div id="sqErr"></div>
+    </div>
+    <div class="card" id="sqResCard" style="display:none">
+      <div class="pers" id="sq_match"></div>
+      <div id="sqOut" style="margin-top:14px"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const api = p => $('#base').value.replace(/\/$/,'') + p;
+const headers = () => { const h={'Content-Type':'application/json'}; const k=$('#key').value.trim(); if(k)h['X-API-Key']=k; return h; };
+
+// ---- questions mirror the model (column -> options = exact strings the model expects) ----
+const Q = [
+  ["Disruptive","Disruptive student",["Calm then explain","Ignore","Talk individually","Punish"]],
+  ["slow learners","Slow learner",["Adjust by level","Use simple examples. Sometimes","Explain same"]],
+  ["Disinterested","Disinterested student",["Encouragement","Engaging activities","Participate"]],
+  ["Parent objections","Parent objection",["Explain calmly","I'm asking to speak. No, really, outside of class.","Apply policy"]],
+  ["I noticed that one of the students' performance levels started to decline and he became withdrawn.","Withdrawn, declining student",["Talk support","I contact the parents directly","Adjust approach"]],
+  ["I disagreed with a fellow teacher or administrator (regarding teaching methods).","Conflict with colleague/admin",["Present calmly","Compromise","Adhere policy"]],
+  ["Engagement","Engagement & class size",["Weak interaction, strong effect","Average interaction, some effect","Good interaction, slight effect","Very good interaction, no effect","Excellent interaction, no effect on quality"]],
+  ["New skill","New skill learned",["None","Learned, not applied","Applying occasionally","Applying consistently in class every day"]],
+  ["High performers","High performer",["I asked him to be quiet until his colleague finished.","Make him help his weaker colleagues.","Challenges","Nothing specific"]],
+  ["Compensation","Salary vs effort",["I strongly agree","Agree","Neutral","No Agree","Strongly No Agree"]],
+  ["Tech use","Tech use",["No, use it","Use it a little.","Sometimes","Effectively","Always"]],
+  ["AI homework","AI-made homework",["Reject homework","I ask him to return it under my supervision inside the classroom.","Discuss content","Use as aid"]],
+  ["Integrate AI","AI integration in teaching",["No, I don't use it and I prefer the traditional methods completely.","I only use it to save time in preparing and writing No tests","I use it in the classroom to create interactive activities with the students.","I train Nob on how to correctly formulate commands (prompts) for searching."]],
+  ["AI app concerns","Priority when choosing an AI app",["The ease of use and design of the application.","Free or paid","How secure and private is Noob's data on this application?","Will it save me the effort of correcting, or no?"]],
+];
+const PROF = [
+  ["Age","Age",["22-25","26-30","31-40","41-50"]],
+  ["Experience","Experience",["1 year","2 years","3-5 years","5-10 years","10+"]],
+  ["Gender","Gender",["Female","Male"]],
+  ["Teacher for the stage","Stage",["KG","Primary","Preparatory","Secondary"]],
+  ["Languages","Languages",["Arabic","Arabic;English","Arabic;English;French"]],
+  ["chronic disease","Chronic disease",["No","Yes"]],
+];
+
+function opt(v){ const t=v.length>46?v.slice(0,46)+'…':v; return `<option value="${v.replace(/"/g,'&quot;')}">${t}</option>`; }
+function buildForm(){
+  $('#qform').innerHTML = Q.map((q,i)=>`<div><label class="f">${q[1]}</label>
+    <select data-col="${q[0].replace(/"/g,'&quot;')}">${q[2].map(opt).join('')}</select></div>`).join('');
+  $('#pform').innerHTML = PROF.map(p=>`<div><label class="f">${p[1]}</label>
+    <select data-col="${p[0]}">${p[2].map(opt).join('')}</select></div>`).join('');
+  // strong defaults so first click works well
+  const strong={"Disruptive":"Talk individually","slow learners":"Adjust by level","Disinterested":"Engaging activities","Parent objections":"Explain calmly","Engagement":"Excellent interaction, no effect on quality","New skill":"Applying consistently in class every day","High performers":"Challenges","Compensation":"Agree","Tech use":"Always","AI homework":"Use as aid","Integrate AI":"I train Nob on how to correctly formulate commands (prompts) for searching.","AI app concerns":"How secure and private is Noob's data on this application?","Experience":"5-10 years"};
+  document.querySelectorAll('#qform select,#pform select').forEach(s=>{const c=s.dataset.col; if(strong[c])s.value=strong[c];});
+}
+function collect(){ const a={}; document.querySelectorAll('#qform select,#pform select').forEach(s=>a[s.dataset.col]=s.value); return a; }
+function randomize(){ document.querySelectorAll('#qform select,#pform select').forEach(s=>{s.selectedIndex=Math.floor(Math.random()*s.options.length);}); }
+
+// ---- tabs ----
+document.querySelectorAll('.tab[data-t]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab[data-t]').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); $('#p-'+b.dataset.t).classList.add('active');
+});
+
+// ---- health ----
+async function ping(){
+  $('#dot').className='dot'; $('#statusTxt').textContent='Checking…';
+  try{ const r=await fetch(api('/health')); const d=await r.json();
+    $('#dot').className='dot up';
+    $('#statusTxt').textContent=`Connected · ${d.schools} schools · ${d.teachers} teachers`;
+  }catch(e){ $('#dot').className='dot down'; $('#statusTxt').textContent='Service unavailable — run uvicorn'; }
+}
+
+// ---- predict ----
+let lastSchools=[];
+async function runPredict(){
+  $('#predErr').innerHTML=''; const btn=$('#runBtn'); btn.disabled=true; btn.textContent='Computing…';
+  try{
+    const r=await fetch(api('/ai/predict'),{method:'POST',headers:headers(),body:JSON.stringify(collect())});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||d.detail||'request failed');
+    renderResult(d);
+  }catch(e){ $('#predErr').innerHTML=`<div class="err">${e.message}</div>`; }
+  finally{ btn.disabled=false; btn.textContent='Run AI Assessment'; }
+}
+function renderResult(d){
+  $('#resCard').style.display='block';
+  const ok=d.decision==='ACCEPTED';
+  $('#verdict').className='badge '+(ok?'ok':'no');
+  $('#verdict').textContent=ok?'ACCEPTED ✓':'REJECTED ✕';
+  $('#confTxt').textContent=`Confidence: ${d.confidence}% · Overall score: ${d.overall_score}/100`;
+  const g=d.dimensions;
+  $('#gauges').innerHTML=[['classroom','Classroom',g.classroom],['professional','Professional',g.professional],['tech','Tech & AI',g.tech]]
+    .map(x=>`<div class="gauge"><div class="lab"><span>${x[1]}</span><span class="mono">${x[2]}%</span></div>
+      <div class="val mono">${x[2]}</div><div class="meter"><i data-w="${x[2]}"></i></div></div>`).join('');
+  setTimeout(()=>document.querySelectorAll('#gauges .meter > i').forEach(i=>i.style.width=i.dataset.w+'%'),50);
+  const p=d.personality;
+  $('#pers').innerHTML=`<b>${p.label}</b> <span style="color:var(--muted)">· ${p.arabic}</span><br>
+    <span style="font-size:13px">${p.description}</span><br><span style="font-size:12.5px;color:var(--muted)">Suggested growth: ${p.growth}</span>`;
+  $('#posF').innerHTML=(d.positive_factors||[]).map(f=>`<li><span>${f.feature}</span><b>+${f.value}</b></li>`).join('')||'<li>—</li>';
+  $('#negF').innerHTML=(d.negative_factors||[]).map(f=>`<li><span>${f.feature}</span><b>${f.value}</b></li>`).join('')||'<li>None</li>';
+  $('#tips').innerHTML=(d.suggestions||[]).map(t=>`<li>💡 ${t}</li>`).join('')||'<li>Excellent across all areas.</li>';
+  lastSchools=d.recommended_schools||[];
+  const cities=[...new Set(lastSchools.map(s=>s.city))].sort();
+  const types=[...new Set(lastSchools.map(s=>s.school_type))].sort();
+  $('#fCity').innerHTML='<option value="">All cities</option>'+cities.map(c=>`<option>${c}</option>`).join('');
+  $('#fType').innerHTML='<option value="">All types</option>'+types.map(t=>`<option>${t}</option>`).join('');
+  reFilter();
+}
+function reFilter(){
+  const c=$('#fCity').value, t=$('#fType').value;
+  let list=lastSchools.filter(s=>(!c||s.city===c)&&(!t||s.school_type===t));
+  $('#schools').innerHTML=list.length? list.slice(0,12).map(s=>`<div class="school">
+    <span class="score mono">${s.match_score}</span>
+    <div><div><b>${s.school_name}</b></div>
+      <div class="meta">${s.city} · ${s.school_type} · ${s.matched_subjects.map(x=>x.subject).join(', ')||'—'}</div></div>
+    ${s.personality_match?'<span class="star">★ Personality match</span>':''}</div>`).join('')
+    : '<div class="empty">No schools match this filter.</div>';
+}
+
+// ---- analytics ----
+let charts={};
+function mkChart(id,cfg){ if(charts[id])charts[id].destroy(); charts[id]=new Chart($('#'+id),cfg); }
+async function loadAnalytics(){
+  try{
+    const [ov,pr]=await Promise.all([
+      fetch(api('/analytics/overview'),{headers:headers()}).then(r=>r.json()),
+      fetch(api('/analytics/predictions'),{headers:headers()}).then(r=>r.json())
+    ]);
+    const c=ov.cards;
+    $('#kpis').innerHTML=[['total_schools','Schools'],['total_teachers','Teachers'],['subjects_tracked','Subjects'],['acceptance_rate','Acceptance %'],['hiring_success_rate','Hiring success %']]
+      .map(k=>`<div class="kpi"><div class="n mono">${c[k[0]]}</div><div class="l">${k[1]}</div></div>`).join('');
+    const teal='#0E7C6B', amber='#E8920C';
+    mkChart('chSubj',{type:'bar',data:{labels:ov.subjects_analysis.map(s=>s.subject),
+      datasets:[{label:'Avg evaluation',data:ov.subjects_analysis.map(s=>s.avg_evaluation),backgroundColor:teal,borderRadius:6}]},
+      options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:10}}}});
+    mkChart('chType',{type:'doughnut',data:{labels:ov.school_types.map(t=>t.type),
+      datasets:[{data:ov.school_types.map(t=>t.count),backgroundColor:['#0E7C6B','#E8920C','#3A4156','#5BAFA2','#C2453B','#8A91A6']}]},
+      options:{plugins:{legend:{position:'bottom'}}}});
+    mkChart('chCity',{type:'bar',data:{labels:ov.top_locations.map(l=>l.city),
+      datasets:[{label:'Schools',data:ov.top_locations.map(l=>l.schools),backgroundColor:amber,borderRadius:6}]},
+      options:{indexAxis:'y',plugins:{legend:{display:false}}}});
+    const trend={};(pr.predictions||[]).forEach(p=>trend[p.subject]=p);
+    $('#insights').innerHTML=(ov.ai_insights||[]).map(i=>`<li>◆ ${i}</li>`).join('')
+      +(pr.predictions||[]).map(p=>`<li>📈 ${p.subject}: now ${p.current_avg} → projected ${p.projected_next_term} (${p.trend})</li>`).join('');
+  }catch(e){ $('#kpis').innerHTML=`<div class="err">${e.message}</div>`; }
+}
+
+// ---- reverse ----
+async function loadTeachers(){
+  $('#revErr').innerHTML=''; $('#revOut').innerHTML='<div class="empty">Loading…</div>';
+  try{
+    const r=await fetch(api('/recommend/teachers/'+encodeURIComponent($('#sid').value.trim())+'?limit=5'),{headers:headers()});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||d.detail||'School not found');
+    let html=`<div class="pers"><b>${d.school.name}</b> · ${d.school.type} · ${d.school.city}</div>`;
+    for(const [subj,ts] of Object.entries(d.teachers_by_subject)){
+      html+=`<h2 style="font-size:14px;margin:14px 0 6px">${subj} <span style="color:var(--muted);font-weight:400">(${ts.length})</span></h2>`;
+      html+='<div class="schools">'+(ts.length?ts.map(t=>`<div class="school"><span class="score mono">${t.match_score}</span>
+        <div><div><b>${t.name}</b></div><div class="meta">CL ${t.classroom} · PR ${t.professional} · TC ${t.tech} · ${t.personality_type}</div></div>
+        ${t.personality_match?'<span class="star">★</span>':''}</div>`).join(''):'<div class="empty">No qualified teachers.</div>')+'</div>';
+    }
+    $('#revOut').innerHTML=html;
+  }catch(e){ $('#revOut').innerHTML=''; $('#revErr').innerHTML=`<div class="err">${e.message}</div>`; }
+}
+
+
+// ---- school questions (5 traits) ----
+const SQ = [
+  ["discipline","Discipline style",["Strict / Structured","Flexible / Adaptive"]],
+  ["energy","Teacher energy",["Calm / Patient","Energetic / Dynamic"]],
+  ["leadership","Team role",["Leader / Initiator","Supporter / Team-player"]],
+  ["communication","Communication style",["Direct / Results-focused","Empathetic / Relationship-focused"]],
+  ["approach","Teaching approach",["Analytical / Methodical","Creative / Innovative"]],
+];
+function buildSQ(){
+  document.querySelector("#sq_questions").innerHTML = SQ.map(q=>`<div><label class="f">${q[1]}</label>
+    <select data-sq="${q[0]}">${q[2].map(o=>`<option>${o}</option>`).join("")}</select></div>`).join("");
+}
+async function matchSchool(){
+  document.querySelector("#sqErr").innerHTML="";
+  const answers={}; document.querySelectorAll("#sq_questions select").forEach(s=>answers[s.dataset.sq]=s.value);
+  const payload={
+    school_name: document.querySelector("#sq_name").value,
+    city: document.querySelector("#sq_city").value,
+    type: document.querySelector("#sq_type").value,
+    subjects_needed: document.querySelector("#sq_subjects").value.split(",").map(x=>x.trim()).filter(Boolean),
+    answers, limit:5
+  };
+  try{
+    const r=await fetch(api("/school/match-teachers"),{method:"POST",headers:headers(),body:JSON.stringify(payload)});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||d.detail||"failed");
+    document.querySelector("#sqResCard").style.display="block";
+    document.querySelector("#sq_match").innerHTML=`<b>Matched personalities:</b> ${d.school.matched_personalities.join(", ")}<br>
+      <span style="color:var(--muted)">Total accepted teachers: ${d.total_accepted} · Acceptance criteria: CL≥${d.school.min_scores.classroom} PR≥${d.school.min_scores.professional} TC≥${d.school.min_scores.tech}</span>`;
+    let html="";
+    for(const [subj,ts] of Object.entries(d.teachers_by_subject)){
+      html+=`<h2 style="font-size:14px;margin:14px 0 6px">${subj} <span style="color:var(--muted);font-weight:400">(${ts.length} accepted)</span></h2><div class="schools">`;
+      html+= ts.length? ts.map(t=>`<div class="school"><span class="score mono">${t.effective_score}</span>
+        <div><div><b>${t.name}</b></div><div class="meta">CL ${t.classroom} · PR ${t.professional} · TC ${t.tech} · ${t.personality_type} · ${t.gender}/${t.stage}</div></div>
+        ${t.personality_match?'<span class="star">★ Personality match</span>':''}</div>`).join("")
+        : '<div class="empty">No accepted teachers for this subject.</div>';
+      html+="</div>";
+    }
+    document.querySelector("#sqOut").innerHTML=html;
+  }catch(e){ document.querySelector("#sqErr").innerHTML=`<div class="err">${e.message}</div>`; }
+}
+buildSQ();
+
+buildForm(); ping();
+</script>
+</body>
+</html>

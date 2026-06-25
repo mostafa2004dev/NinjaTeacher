@@ -1,0 +1,22 @@
+✅ Database connected
+✅ Associations defined
+✅ Models synced
+✅ Subscription plans seeded successfully.
+✅ Admin already exists — skipping seed.
+✅ Socket.io initialized
+🚀 http://localhost:3000
+🔌 ws://localhost:3000
+[Socket.io] User 14 connected (wg1zKKdldmx8lOLsAAAB)
+[Socket.io] User 14 disconnected: transport close
+[Socket.io] User 14 connected (NoGQJWfVBH2yz4YMAAAE)
+📩 Apply request body: {
+  job_id: 1,
+  school_id: 16,
+  cover_letter: 'I am a highly experienced Mathematics teacher with 7 years of experience.'
+}
+👤 Teacher ID: 17
+🏫 School ID: 16 | 💼 Job ID: 1
+📩 Apply request body: { job_id: 1, school_id: 16, cover_letter: 'Duplicate attempt' }
+👤 Teacher ID: 17
+🏫 School ID: 16 | 💼 Job ID: 1
+[Socket.io] User 14 disconnected: transport close
